@@ -156,7 +156,7 @@ route_colors <- gtfs$routes %>% select(route_id, route_short_name, route_color)
 route_colors$route_color[which(route_colors$route_color == "")] <- "454545"
 route_colors <- setNames(paste0("#", route_colors$route_color), route_colors$route_short_name)
 
-ggplot(departures_180823) + theme_bw() +
+p1 <- ggplot(departures_180823) + theme_bw() +
   geom_point(aes(y=trip_headsign, x=departure_time, color = route_short_name), size = 0.2) +
   scale_x_time(breaks = seq(0, max(as.numeric(departures$departure_time)), 3600),
                labels = scales::time_format("%H:%M")) +
@@ -171,7 +171,7 @@ departures_180823_sub_7to8 <- departures_180823 %>%
   filter(stop_id %in% c("127N", "127S")) %>%
   filter(departure_time >= hms::hms(hours = 7) & departure_time <= hms::hms(hour = 8))
 
-p <- ggplot(departures_180823_sub_7to8) + theme_bw() +
+p2 <- ggplot(departures_180823_sub_7to8) + theme_bw() +
   geom_point(aes(y=trip_headsign, x=departure_time, color = route_short_name), size = 1) +
   scale_x_time(breaks = seq(7*3600, 9*3600, 300), labels = scales::time_format("%H:%M")) +
   scale_y_discrete(drop = F) +
@@ -182,7 +182,12 @@ p <- ggplot(departures_180823_sub_7to8) + theme_bw() +
 
 # Of course this plot idea can be expanded further. You could also differentiate each route by direction (using direction_id, headsign, origin or next/previous stops). Another approach is to calculate frequencies and show different levels of service during the day, all depending on the goal of your analysis.
 
-plot(p)
+plot(p1)
 
-ggsave(stri_c("stringline","_",as.numeric(Sys.time()),".png"),device="png",
-       plot = p, width = 25, height = 20, units = "in", dpi = 300) 
+ggsave(stri_c("R_Plot_p1_","_",as.numeric(Sys.time()),".png"),device="png",
+       plot = p1, width = 25, height = 20, units = "in", dpi = 300) 
+
+plot(p2)
+
+ggsave(stri_c("R_Plot_p2_","_",as.numeric(Sys.time()),".png"),device="png",
+       plot = p2, width = 25, height = 20, units = "in", dpi = 300) 
