@@ -100,6 +100,44 @@ https://api.mta.info/GTFS.pdf
 wget http://web.mta.info/developers/data/nyct/bus/google_transit_manhattan.zip
 ```
 
+I saw an error using tidytransit with the MBTA GTFS feed, a new file fare_products.txt
+
+https://groups.google.com/g/massdotdevelopers/c/ckBglr8E3Eo/m/7yMuJieVAgAJ
+
+https://github.com/mbta/gtfs-documentation/pull/34
+
+produces this error when running the R program:
+
+```
+# This may be unrelated, not sure:
+
+Error in UseMethod("group_by") :
+  no applicable method for 'group_by' applied to an object of class "NULL"
+In addition: Warning message:
+
+# This is the actual error:
+
+In gtfs_to_tidygtfs(g, files = files) :
+  Duplicated ids found in: fare_products
+The returned object is not a tidygtfs object, you can use as_tidygtfs() after fixing the issue.
+```
+
+To fix, back up the zip file so you have an original copy:
+
+```
+cp MBTA_GTFS.zip MBTA_GTFS_original.zip
+```
+
+Now remove the offending file from the zip file
+
+```
+zip -d MBTA_GTFS.zip fare_products.txt
+```
+
+Now the file can be used as normal
+
+https://github.com/mbta/gtfs-documentation/issues/39
+
 ## trip_origin and trip_headsign
 
 To display where a bus (or any public transit vehicle) is headed on a timetable we need the

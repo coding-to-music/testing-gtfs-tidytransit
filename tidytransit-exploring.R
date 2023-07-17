@@ -2,6 +2,8 @@
 # https://r-transit.github.io/tidytransit/articles/timetable.html
 
 knitr::opts_chunk$set(echo = TRUE)
+# Load necessary packages
+library(gtfsio)
 library(tidytransit)
 library(dplyr)
 library(ggplot2)
@@ -11,29 +13,27 @@ gc()
 current_dir <- getwd()
 # print(current_dir)
 
+# data_file_path <- paste0(current_dir, "/gtfs/MBTA_GTFS.zip")
 data_file_path <- paste0(current_dir, "/gtfs/MBTA_GTFS.zip")
 print(data_file_path)
 
-local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
-gtfs <- read_gtfs(local_gtfs_path)
-# gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
-
-
-# Load necessary packages
-library(gtfsio)
-
 # Read GTFS data into a gtfs object
-g <- read_gtfs(data_file_path)
+print("loading mbta")
+gtfs_mbta <- read_gtfs(data_file_path)
 
-# Remove or modify duplicated IDs in the fare_products table
-# For example, let's append "_dup" to the duplicated IDs
-g$fare_products$fare_product_id <- make.unique(g$fare_products$fare_product_id)
+print("loading sample mta subway")
+local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
+gtfs_mta_sample <- read_gtfs(local_gtfs_path)
 
-# Convert the modified data to a tidygtfs object
-# tidy_g <- as_tidygtfs(g)
+print("loading bus")
+gtfs_mta_latest_bus <- read_gtfs("http://web.mta.info/developers/data/nyct/bus/google_transit_manhattan.zip")
 
-# mbta_local_gtfs_path <- system.file("extdata", data_file_path, package = "tidytransit")
-# dat_master <- read_gtfs(data_file_path) #this should be the path to your GTFS file.
+# the latest MTA subway file gives an error when loading:
+# print("loading subway")
+# gtfs_mta_latest_subway <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
 
-# Exclude the fare_products table during conversion
-tidy_g <- gtfs_to_tidygtfs(g, exclude_tables = "fare_products")
+# Warning message:
+# In data.table::fread(file.path(tmpdir, file_txt), select = fields_classes,  :
+#   Stopped early on line 129246. Expected 5 fields but found 0. Consider fill=TRUE and comment.char=. First discarded non-empty line: <<5..N70R,40.704817,-74.014065,0,>>
+
+
