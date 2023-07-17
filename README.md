@@ -12,6 +12,10 @@ https://r-transit.github.io/tidytransit/articles/timetable.html
 
 https://pvibien.com/stringline.htm
 
+## See this other project for generating Stringlines using TidyTransit and GTFS and R
+
+https://github.com/coding-to-music/r-stringlines-nyc-mta-gtfs-train-visualization
+
 ### Helpful links for installing R
 
 https://intro2r.com/install_r.html
@@ -72,6 +76,28 @@ sample feed with tidytransit but you can read it directly from the MTA's website
 local_gtfs_path <- system.file("extdata", "google_transit_nyc_subway.zip", package = "tidytransit")
 gtfs <- read_gtfs(local_gtfs_path)
 # gtfs <- read_gtfs("http://web.mta.info/developers/data/nyct/subway/google_transit.zip")
+```
+
+### MBTA
+
+```
+https://transitfeeds.com/p/mbta/64
+
+https://www.mbta.com/developers/gtfs
+
+wget https://cdn.mbta.com/MBTA_GTFS.zip
+```
+
+### MTA NYC Subway GTFS Schedule Data
+
+```
+https://transitfeeds.com/p/mta/79
+
+https://new.mta.info/developers
+
+https://api.mta.info/GTFS.pdf
+
+wget http://web.mta.info/developers/data/nyct/bus/google_transit_manhattan.zip
 ```
 
 ## trip_origin and trip_headsign
