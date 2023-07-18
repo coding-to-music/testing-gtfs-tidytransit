@@ -43,13 +43,13 @@ gtfs <- gtfs_mbta
 ###############################################################
 # Declare variables
 ###############################################################
-route_tar <- c("Green-C") #Use route_ids , not the full route names. Run 1-22 and see dat$routes for more information. 
-#You can use up to 2 routes in the route_tar argument, BUT the 2 routes must a) share at least 2 stops, and b) have the same direction_id-direction correspondances.
+route_target <- c("Green-C") #Use route_ids , not the full route names. Run 1-22 and see dat$routes for more information. 
+#You can use up to 2 routes in the route_target argument, BUT the 2 routes must a) share at least 2 stops, and b) have the same direction_id-direction correspondances.
 #For example, the J and M trains in New York run together, but a Metropolitan Ave-bound M and a Jamaica-bound J have direction_ids of 1 and 0, respectively, so you
 #cannot plot both at the same time. You can, however, put them in the routes_secondary argument, provided you plan to plot directions 0 and 1.
 
 # Stop Name
-stop_tar <- "Park Street"
+stop_target <- "Park Street"
 
 # Park Street stop_id list (Green and Red lines)
 stop_mand <- c(70075, 70076, 70196, 70197, 70197, 70198, 70199, 70200, 71199) #If you want to ensure that the string plot includes a certain (branch of a route serving a) stop, add its stop ID here. 
@@ -57,21 +57,21 @@ stop_mand <- c(70075, 70076, 70196, 70197, 70197, 70198, 70199, 70200, 71199) #I
 
 routes_secondary <- c() #Add any other routes you'd like to see shown on your string plot. Not many rules for what can/can't go here!
 
-dir_tar <- c(0,1) #Select one or both directions to view. Possible directions are 0 and 1. What they correspond to varies by agency.
+dir_target <- c(0,1) #Select one or both directions to view. Possible directions are 0 and 1. What they correspond to varies by agency.
 
-date_tar <- as.Date("2023-07-11") #Choose your sample date. This MUST lie within the start/end dates of your gtfs. Run lines 1-63 and 
+date_target <- as.Date("2023-07-11") #Choose your sample date. This MUST lie within the target/end dates of your gtfs. Run lines 1-63 and 
 #paste View(dat$.$dates_services) in the command line to see available dates, or see the dates listed on the GTFS download site. 
 
-time_start <- period_to_seconds(hms("04:00:00")) #Start time for the plot
+time_target <- period_to_seconds(hms("04:00:00")) #target time for the plot
 time_end <- period_to_seconds(hms("10:00:00")) #End time for the plot 
 
 # ggsave(stri_c("R_Plot_p1_","_",as.numeric(Sys.time()),".png"),device="png",
-save_filename <- stri_c(current_dir, "/plots/","R_Plot_p1_",route_tar, "_", date_tar,"_",as.numeric(Sys.time()),".png")
+save_filename <- stri_c(current_dir, "/plots/","R_Plot_p1_",route_target, "_", date_target,"_",as.numeric(Sys.time()),".png")
 print(save_filename)
 # stop("stopping")
 
 ###############################################################
-# Code starts here
+# Code targets here
 ###############################################################
 print("trip_origin and trip_headsign")
 
@@ -118,7 +118,7 @@ print("Create A Departure Time Table")
 
 stop_ids <- gtfs$stops %>%
   # filter(stop_name == "Times Sq - 42 St") %>%
-  filter(stop_name == stop_tar) %>%
+  filter(stop_name == stop_target) %>%
   select(stop_id)
 
 # Note that multiple unrelated stops can have the same stop_name, see cluster_stops() for examples how to find these cases.
@@ -156,7 +156,7 @@ departures <- departures %>%
 # View(departures[1:9, ])
 print(departures[1:9, ], n = Inf)
 
-print(stri_c("Now we have a data frame that tells us about the origin, destination, and time at which each train departs from ", stop_tar, " for every possible schedule of service.")) 
+print(stri_c("Now we have a data frame that tells us about the origin, destination, and time at which each train departs from ", stop_target, " for every possible schedule of service.")) 
 
 print(departures %>%
   select(arrival_time,
@@ -171,7 +171,7 @@ print(dim(departures))
 
 print("However, we do not know days on which these trips run. Using the service_id column on our calculated departures and tidytransit's calculated dates_services data frame, we can filter trips to a given date of interest.") 
 
-head(gtfs$.$dates_services)
+print(head(gtfs$.$dates_services))
 
 # Please see the servicepatterns vignette for further examples on how to use this table.
 
@@ -181,15 +181,15 @@ print("Extract a single day")
 
 # For example, for August 23rd 2018, a typical weekday, we can filter as follows:
 
-services_on_180823 <- gtfs$.$dates_services %>%
-  filter(date == "2018-08-23") %>% select(service_id)
+services_on_date_target <- gtfs$.$dates_services %>%
+  filter(date == date_target) %>% select(service_id)
 
-departures_180823 <- departures %>%
-  inner_join(services_on_180823, by = "service_id")
+departures_date_target <- departures %>%
+  inner_join(services_on_date_target, by = "service_id")
 
 # How services and trips are set up depends largely on the feed. For an idea how to handle other dates and questions about schedules have a look at the servicepatterns vignette.
 
-departures_180823 %>%
+departures_date_target %>%
   arrange(departure_time, stop_id, route_short_name) %>%
   select(departure_time, stop_id, route_short_name, trip_headsign) %>%
   filter(departure_time >= hms::hms(hours = 7)) %>%
@@ -198,34 +198,37 @@ departures_180823 %>%
 
 print("Simple plot") 
 
-print("We will now plot all departures from Times Square depending on trip_headsign and route. We can use the route colors provided in the feed.") 
+print(stri_c("We will now plot all departures from ", stop_target, " depending on trip_headsign and route. We can use the route colors provided in the feed.")) 
 
 route_colors <- gtfs$routes %>% select(route_id, route_short_name, route_color)
 route_colors$route_color[which(route_colors$route_color == "")] <- "454545"
 route_colors <- setNames(paste0("#", route_colors$route_color), route_colors$route_short_name)
 
-p1 <- ggplot(departures_180823) + theme_bw() +
+plot_title <- stri_c("Departures from ", stop_target, " on ", date_target)
+
+p1 <- ggplot(departures_date_target) + theme_bw() +
   geom_point(aes(y=trip_headsign, x=departure_time, color = route_short_name), size = 0.2) +
   scale_x_time(breaks = seq(0, max(as.numeric(departures$departure_time)), 3600),
                labels = scales::time_format("%H:%M")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme(legend.position = "bottom") +
   scale_color_manual(values = route_colors) +
-  labs(title = "Departures from Times Square on 08/23/18")
+  labs(title = plot_title)
 
 print("Now we plot departures for all stop_ids with the same name, so we can separate for different stop_ids. The following plot shows all departures for stop_ids 127N and 127S from 7 to 8 AM.") 
 
-departures_180823_sub_7to8 <- departures_180823 %>%
-  filter(stop_id %in% c("127N", "127S")) %>%
+departures_date_target_sub_7to8 <- departures_date_target %>%
+  # filter(stop_id %in% c("127N", "127S")) %>%
+  filter(stop_id %in% stop_mand) %>%
   filter(departure_time >= hms::hms(hours = 7) & departure_time <= hms::hms(hour = 8))
 
-p2 <- ggplot(departures_180823_sub_7to8) + theme_bw() +
+p2 <- ggplot(departures_date_target_sub_7to8) + theme_bw() +
   geom_point(aes(y=trip_headsign, x=departure_time, color = route_short_name), size = 1) +
   scale_x_time(breaks = seq(7*3600, 9*3600, 300), labels = scales::time_format("%H:%M")) +
   scale_y_discrete(drop = F) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme(legend.position = "bottom") +
-  labs(title = "Departures from Times Square on 08/23/18") +
+  labs(title = plot_title) +
   facet_wrap(~stop_id, ncol = 1)
 
 # Of course this plot idea can be expanded further. You could also differentiate each route by direction (using direction_id, headsign, origin or next/previous stops). Another approach is to calculate frequencies and show different levels of service during the day, all depending on the goal of your analysis.
