@@ -66,9 +66,6 @@ date_target <- as.Date("2023-07-11") #Choose your sample date. This MUST lie wit
 time_target <- period_to_seconds(hms("04:00:00")) #target time for the plot
 time_end <- period_to_seconds(hms("10:00:00")) #End time for the plot 
 
-# ggsave(stri_c("R_Plot_p1_","_",as.numeric(Sys.time()),".png"),device="png",
-save_filename <- stri_c(current_dir, "/plots/","R_Plot_p1_",route_target, "_", date_target,"_",as.numeric(Sys.time()),".png")
-print(save_filename)
 # stop("stopping")
 
 ###############################################################
@@ -237,10 +234,17 @@ p2 <- ggplot(departures_date_target_sub_7to8) + theme_bw() +
 
 plot(p1)
 
-# ggsave(save_filename, device="png",
-#        plot = p1, width = 25, height = 20, units = "in", dpi = 300) 
+# ggsave(stri_c("R_Plot_p1_","_",as.numeric(Sys.time()),".png"),device="png",
+save_filename <- stri_c(current_dir, "/plots/","R_Plot_p1_",stop_target, "_", date_target,"_",as.numeric(Sys.time()),".png")
+print(save_filename)
+
+ggsave(save_filename, device="png",
+       plot = p1, width = 25, height = 20, units = "in", dpi = 300) 
 
 plot(p2)
 
-# ggsave(stri_c("R_Plot_p2_","_",as.numeric(Sys.time()),".png"),device="png",
-#        plot = p2, width = 25, height = 20, units = "in", dpi = 300) 
+save_filename <- stri_c(current_dir, "/plots/","R_Plot_p2_",stop_target, "_", date_target,"_",as.numeric(Sys.time()),".png")
+print(save_filename)
+
+ggsave(save_filename, device="png",
+       plot = p2, width = 25, height = 20, units = "in", dpi = 300) 
