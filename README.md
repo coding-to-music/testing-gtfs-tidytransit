@@ -16,6 +16,12 @@ https://pvibien.com/stringline.htm
 
 https://github.com/coding-to-music/r-stringlines-nyc-mta-gtfs-train-visualization
 
+## These other R GTFS projects look useful
+
+https://r-transit.github.io/tidytransit/articles/servicepatterns.html
+
+https://r-transit.github.io/tidytransit/articles/frequency.html
+
 ### Helpful links for installing R
 
 https://intro2r.com/install_r.html
