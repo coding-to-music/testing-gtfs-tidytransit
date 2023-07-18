@@ -52,7 +52,8 @@ route_target <- c("Green-C") #Use route_ids , not the full route names. Run 1-22
 stop_target <- "Park Street"
 
 # Park Street stop_id list (Green and Red lines)
-stop_mand <- c(70075, 70076, 70196, 70197, 70197, 70198, 70199, 70200, 71199) #If you want to ensure that the string plot includes a certain (branch of a route serving a) stop, add its stop ID here. 
+# stop_list <- c(70075, 70076, 70196, 70197, 70197, 70198, 70199, 70200, 71199) #If you want to ensure that the string plot includes a certain (branch of a route serving a) stop, add its stop ID here. 
+stop_list <- c(70200) #If you want to ensure that the string plot includes a certain (branch of a route serving a) stop, add its stop ID here. 
 #Remember to include that stop's ID in both directions if plotting a bidirectional plot! 
 
 routes_secondary <- c() #Add any other routes you'd like to see shown on your string plot. Not many rules for what can/can't go here!
@@ -214,12 +215,13 @@ p1 <- ggplot(departures_date_target) + theme_bw() +
   theme(legend.position = "bottom") +
   scale_color_manual(values = route_colors) +
   labs(title = plot_title)
+  # caption = "Chart code by @ThomasConnors"
 
 print("Now we plot departures for all stop_ids with the same name, so we can separate for different stop_ids. The following plot shows all departures for stop_ids 127N and 127S from 7 to 8 AM.") 
 
 departures_date_target_sub_7to8 <- departures_date_target %>%
   # filter(stop_id %in% c("127N", "127S")) %>%
-  filter(stop_id %in% stop_mand) %>%
+  filter(stop_id %in% stop_list) %>%
   filter(departure_time >= hms::hms(hours = 7) & departure_time <= hms::hms(hour = 8))
 
 p2 <- ggplot(departures_date_target_sub_7to8) + theme_bw() +
